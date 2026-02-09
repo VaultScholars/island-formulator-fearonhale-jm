@@ -20,7 +20,7 @@
 		"RAILS_ENV": "development",
     "BUNDLE_PATH": "/bundler",
     "DBHOST": "postgres",
-    "PORT": "3013",
+    "PORT": "3000",
     "VISUAL": "code --wait",
     "SOLID_QUEUE_IN_PUMA": "1",
     "BUNDLER_EDITOR": "code"
