@@ -1,0 +1,35 @@
+<% content_for :title, "Showing Ingredient" %>
+
+<div class="bg-emerald-100 min-h-screen w-full flex flex-col items-center py-12 px-5">
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-100 mb-5 text-green-600 font-medium rounded-md shadow-sm" id="notice">
+      <%= notice %>
+    </p>
+  <% end %>
+
+  <div class="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8 border-3 border-emerald-600">
+    <div class="text-center mb-8">
+      <h1 class="font-black text-4xl text-gray-900">Ingredient Details</h1>
+      <p class="text-emerald-600 font-medium py-3">Viewing shelf item #<%= @ingredient.id %></p>
+    </div>
+
+    <div class="mb-8">
+      <%= render @ingredient %>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-6 border-t border-gray-100">
+      <%= link_to "Edit this Ingredient", edit_ingredient_path(@ingredient), 
+          class: "text-center rounded-lg px-4 py-3 bg-emerald-600 hover:bg-emerald-800 text-white font-bold transition shadow-sm" %>
+      
+      <%= link_to "Back to Ingredients", ingredients_path, 
+          class: "text-center rounded-lg px-4 py-3 bg-emerald-100 hover:bg-emerald-300 text-gray-700 font-bold transition" %>
+      
+      <div class="sm:col-span-2">
+        <%= button_to "Destroy this Ingredient", @ingredient, method: :delete, 
+            class: "w-full rounded-lg px-4 py-3 text-white bg-red-600 hover:bg-red-700 font-bold cursor-pointer transition", 
+            data: { turbo_confirm: "Are you sure you want to remove this ingredient?" } %>
+      </div>
+    </div>
+
+  </div>
+</div>
