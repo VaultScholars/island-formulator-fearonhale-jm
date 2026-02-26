@@ -1,4 +1,5 @@
 class IngredientsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_ingredient, only: %i[ show edit update destroy ]
 
   # GET /ingredients or /ingredients.json
@@ -12,7 +13,9 @@ class IngredientsController < ApplicationController
 
   # GET /ingredients/new
   def new
-    @ingredient = Ingredient.new
+    # Version 1: @ingredient = Ingredient.new
+    # Version 2: @ingredient = current_user.ingredients.build
+    @ingredient = current_user&.ingredients&.build || Ingredient.new
   end
 
   # GET /ingredients/1/edit
@@ -22,6 +25,9 @@ class IngredientsController < ApplicationController
   # POST /ingredients or /ingredients.json
   def create
     @ingredient = Ingredient.new(ingredient_params)
+
+    @ingredient = current_user.ingredients.build(ingredient_params)
+    # @ingredient.user = current_user
 
     respond_to do |format|
       if @ingredient.save
@@ -63,8 +69,14 @@ class IngredientsController < ApplicationController
       @ingredient = Ingredient.find(params.expect(:id))
     end
 
+    def authenticate_user!
+      if current_user.nil?
+        redirect_to new_session_path, alert: "You must be signed in to do that."
+      end
+    end
+
     # Only allow a list of trusted parameters through.
     def ingredient_params
-      params.expect(ingredient: [ :name, :category, :description, :notes ])
+      params.expect(ingredient: [ :name, :category, :description, :notes, tag_ids: [] ])
     end
 end
