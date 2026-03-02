@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :batches
+  resources :inventory_items
   resources :recipes
   get "users/new"
   get "users/create"

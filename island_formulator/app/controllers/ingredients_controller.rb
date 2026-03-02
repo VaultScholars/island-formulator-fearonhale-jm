@@ -1,10 +1,10 @@
 class IngredientsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :require_authentication
   before_action :set_ingredient, only: %i[ show edit update destroy ]
 
   # GET /ingredients or /ingredients.json
   def index
-    @ingredients = Ingredient.all
+    @ingredients = current_user.ingredients
   end
 
   # GET /ingredients/1 or /ingredients/1.json
@@ -15,7 +15,8 @@ class IngredientsController < ApplicationController
   def new
     # Version 1: @ingredient = Ingredient.new
     # Version 2: @ingredient = current_user.ingredients.build
-    @ingredient = current_user&.ingredients&.build || Ingredient.new
+    # Version 3: @ingredient = current_user&.ingredients&.build || Ingredient.new
+    @ingredient = current_user.ingredients.build
   end
 
   # GET /ingredients/1/edit
@@ -24,19 +25,12 @@ class IngredientsController < ApplicationController
 
   # POST /ingredients or /ingredients.json
   def create
-    @ingredient = Ingredient.new(ingredient_params)
+    @ingredient = current_user.ingredients.build(ingredient_params)  # Was: Ingredient.new(ingredient_params)
 
-    @ingredient = current_user.ingredients.build(ingredient_params)
-    # @ingredient.user = current_user
-
-    respond_to do |format|
-      if @ingredient.save
-        format.html { redirect_to @ingredient, notice: "Ingredient was successfully created." }
-        format.json { render :show, status: :created, location: @ingredient }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @ingredient.errors, status: :unprocessable_entity }
-      end
+    if @ingredient.save
+      redirect_to @ingredient, notice: "Ingredient was successfully created."
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -66,7 +60,7 @@ class IngredientsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_ingredient
-      @ingredient = Ingredient.find(params.expect(:id))
+      @ingredient = current_user.ingredients.find(params[:id])  # Was: Ingredient.find(params[:id])
     end
 
     def authenticate_user!
@@ -77,6 +71,6 @@ class IngredientsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def ingredient_params
-      params.require(:ingredient).permit(:name, :category, :description, :photo)
+      params.require(:ingredient).permit(:name, :category, :description, :notes, :photo, tag_ids: [])
     end
 end
